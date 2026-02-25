@@ -1,0 +1,54 @@
+name: Flutter Android Build
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.38.4'
+        channel: 'stable'
+        
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '11'
+        
+    - name: Install dependencies
+      run: |
+        cd dart_simple_live-master/simple_live_app
+        flutter pub get
+        
+    - name: Build APK
+      run: |
+        cd dart_simple_live-master/simple_live_app
+        flutter build apk --release
+        
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: simple-live-android-apk
+        path: dart_simple_live-master/simple_live_app/build/app/outputs/flutter-apk/app-release.apk
+        
+    - name: Create Release
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: "dart_simple_live-master/simple_live_app/build/app/outputs/flutter-apk/app-release.apk"
+        tag: v${{ github.run_number }}
+        name: Release ${{ github.run_number }}
+        body: |
+          Automated release of Simple Live Android app
+          Built with Flutter ${{ env.FLUTTER_VERSION }}
