@@ -1,4 +1,4 @@
-import java.util.Properties
+﻿import java.util.Properties
 import java.io.FileInputStream
 
 plugins {
@@ -14,11 +14,19 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
-android {
+android {\n    compileOptions {\n        sourceCompatibility = JavaVersion.VERSION_17\n        targetCompatibility = JavaVersion.VERSION_17\n    }\n    \n    kotlinOptions {\n        jvmTarget = JavaVersion.VERSION_17.toString()\n    }
     namespace = "com.xycz.simple_live"
     compileSdk = flutter.compileSdkVersion
-    // 暂时注释掉NDK版本，避免构建问题
-    // ndkVersion = flutter.ndkVersion
+    // 鏆傛椂娉ㄩ噴鎺塏DK鐗堟湰锛岄伩鍏嶆瀯寤洪棶棰?    // ndkVersion = flutter.ndkVersion
+    
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17.toString()
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
